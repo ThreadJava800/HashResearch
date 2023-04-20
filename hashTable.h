@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <time.h>
+
+#include <chrono>
 
 #include "ClassicList/list.h"
 
@@ -12,6 +15,7 @@ const size_t POISON_HASH      = 0xDEADBEEF;
 const size_t DEFAULT_GNU_HASH = 0xDED;
 const size_t DEFAULT_ARR_SIZE = 127;
 
+static const int WORD_COUNT = 250948;
 static const char *dictionaryFile = "data/cleaned.txt";
 
 struct HashMap_t {
@@ -44,7 +48,9 @@ size_t rotlHash  (const char *string);
 size_t gnuHash   (const char *string);
 
 //==========TESTING==========
+HashMap_t *parseFile(HashFunc_t hashFunc);
 void testHashes();
+void stressTest();
 
 
 #if MAKE_CHECKS

@@ -14,11 +14,7 @@ HashMap_t *parseFile(HashFunc_t hashFunc) {
     while (getline(&keyLine, &lineLen, file) != -1) {
         // get rus word
         getline(&valueLine, &lineLen, file);
-
-        // push into each hashMap
-        for (int i = 0; i < HASH_COUNT; i++) {
-            HashMap::insert(hashMap, keyLine, valueLine);
-        }
+        HashMap::insert(hashMap, keyLine, valueLine);
     }
     fclose(file);
 
@@ -72,3 +68,27 @@ void testHashes() {
 
     free(deviations);
 } 
+
+void stressTest() {
+    srand((unsigned) time(NULL));
+
+    HashMap_t *hashMap = parseFile(rotlHash);
+    const char **strArr = (const char **) calloc(WORD_COUNT, sizeof(const char *));
+
+    int wordCnt = 0;
+    for (int i = 0; i < hashMap->capacity; i++) {
+        for (int j = 0; j < hashMap->data[i]->size; j++) {
+            Pair_t checkPair  = listGet(hashMap->data[i], j);
+            strArr[wordCnt] = checkPair.key;
+
+            wordCnt++;
+        }
+    }
+
+    // double allTime
+    for (int i = 0;  i < (int) 1e3; i++) {
+        int index = rand() % WORD_COUNT;
+        HashMap::search(hashMap, strArr[index]);
+    }
+    
+}

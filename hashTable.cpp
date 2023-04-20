@@ -28,8 +28,8 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
     size_t hashSum = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
 
     Pair_t addPair = {
-        .key   = key,
-        .value = value
+        .key   = strdup(key),
+        .value = strdup(value)
     };
     listPushBack(hashMap->data[hashSum], addPair);
 }
@@ -58,12 +58,12 @@ int mstrcmp(const char *string1, const char *string2) {
 const char *HashMap::search(HashMap_t *hashMap, const char *key) {
     ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
 
-    size_t  hashSum    = hashMap->hashFunc(key);
+    size_t  hashSum    = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
     List_t *searchList = hashMap->data[hashSum];
 
     for (long i = 0; i < searchList->size; i++) {
         Pair_t checkPair = listGet(searchList, i);
-        if (!mstrcmp(key, checkPair.key)) {
+        if (!strcmp(key, checkPair.key)) {
             return checkPair.value;
         }
     }
