@@ -86,7 +86,7 @@ void stressTest() {
     }
 
     // double allTime
-    for (int i = 0;  i < (int) 1e4; i++) {
+    for (int i = 0;  i < (int) 1e5; i++) {
         int index = rand() % WORD_COUNT;
         HashMap::search(hashMap, strArr[index]);
     }

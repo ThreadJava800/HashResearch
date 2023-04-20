@@ -24,7 +24,7 @@ erase:
 	clear
 
 compile:
-	@${CC} ${CFLAGS} -O0 $(SOURCES) -o $(EXECUTABLE)
+	@${CC} -O0 $(SOURCES) -o $(EXECUTABLE)
 
 run:
 	@./${EXECUTABLE}

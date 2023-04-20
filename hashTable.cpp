@@ -37,7 +37,7 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
 int mstrcmp(const char *string1, const char *string2) {
     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
-    while (string1 && string2)
+    while (*string1 != '\0' && *string2 != '\0')
     {
         if (*string1 < *string2) return -1;
         if (*string1 > *string2) return  1;
@@ -46,8 +46,8 @@ int mstrcmp(const char *string1, const char *string2) {
         string2++;
     }
 
-    if (!string1) {
-        if (!string2) return 0;
+    if (*string1 == '\0') {
+        if (*string2 == '\0') return 0;
         return -1;
     }
     
@@ -63,7 +63,7 @@ const char *HashMap::search(HashMap_t *hashMap, const char *key) {
 
     for (long i = 0; i < searchList->size; i++) {
         Pair_t checkPair = listGet(searchList, i);
-        if (!strcmp(key, checkPair.key)) {
+        if (!mstrcmp(key, checkPair.key)) {
             return checkPair.value;
         }
     }
