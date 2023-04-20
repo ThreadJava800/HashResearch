@@ -12,7 +12,7 @@ HashMap_t *HashMap::ctor(HashFunc_t hashFunc) {
         ON_ERROR(!(listArr[i]), "Unable to alloc memory", nullptr);
 
         int ctorErr = 0;
-        _listCtor(listArr[i], &ctorErr);
+        _listCtor(listArr[i], WORD_COUNT, 0, &ctorErr);
     }
 
     hashMap->data     = listArr;

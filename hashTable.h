@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-#include "ClassicList/list.h"
+#include "LinkedList/list.h"
 
 #define MAKE_CHECKS 0
 

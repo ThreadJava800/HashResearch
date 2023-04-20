@@ -1,3 +1,6 @@
 [submodule "ClassicList"]
 	path = ClassicList
 	url = https://github.com/ThreadJava800/ClassicList
+[submodule "LinkedList"]
+	path = LinkedList
+	url = https://github.com/ThreadJava800/LinkedList
