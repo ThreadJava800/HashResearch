@@ -1,10 +1,9 @@
 #include "hashTable.h"
 
 int main() {
-    const char *test = "intrinsics";
-    size_t result = gnuHash(test);
-
-    printf("%lld\n", result);
+    HashMap_t *hashMap = HashMap::ctor(rotlHash);
+    HashMap::insert(hashMap, "test", "me");
+    HashMap::dtor(hashMap);
 
     return 0;
 }

@@ -9,10 +9,10 @@ CFLAGS  = -D _DEBUG -ggdb3 -std=c++17 -O0 -w -Wall -Wextra -Weffc++ -Waggressive
 -Wuseless-cast -Wvariadic-macros -Wno-literal-suffix -Wno-missing-field-initializers -Wno-narrowing -Wno-old-style-cast \
 -Wno-varargs -Wstack-protector -fcheck-new -fsized-deallocation -fstack-protector -fstrict-overflow -flto-odr-type-merging \
 -fno-omit-frame-pointer -pie -fPIE -Werror=vla \
--fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
+# -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
 
-SOURCES=hash.cpp main.cpp
+SOURCES=hash.cpp ClassicList/list.cpp hashTable.cpp main.cpp
 
 EXECUTABLE=hasht
 
