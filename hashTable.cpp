@@ -37,23 +37,79 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
 int mstrcmp(const char *string1, const char *string2) {
     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
-    while (*string1 != '\0' && *string2 != '\0')
-    {
-        if (*string1 < *string2) return -1;
-        if (*string1 > *string2) return  1;
+    __asm__ (
+        ".intel_syntax noprefix\n"
 
-        string1++;
-        string2++;
-    }
+        "\txor eax, eax\n"
+        "\txor ecx, ecx\n"
+    "\t_loop:\n"
+        "\tmovb al, BYTE PTR [rdi]\n"
+        "\tmovb cl, BYTE PTR [rsi]\n"
 
-    if (*string1 == '\0') {
-        if (*string2 == '\0') return 0;
-        return -1;
-    }
-    
-    // else (string1 && !string2)
-    return 1;
+        "\tcmp al, 0\n"
+        "\tje _retNeg\n"
+
+        "\tcmp cl, 0\n"
+        "\tje _ret1\n"
+
+        "\tcmp al, cl\n"
+        "\tjne _default_ret\n"
+
+        "\tinc rsi\n"
+        "\tinc rdi\n"
+
+        "\tjmp _loop\n"
+
+"\t_ret0:\n"
+        "\tmov eax, 0\n"
+        "\tpop rbp\n"
+        "\tret\n"
+
+"\t_ret1:\n"
+        "\tcmp al, cl\n"
+        "\tje _ret0\n"
+
+        "\tmov eax, 1\n"
+        "\tpop rbp\n"
+        "\tret\n"
+        
+"\t_retNeg:\n"
+        "\tcmp al, cl\n"
+        "\tje _ret0\n"
+
+        "\tmov eax, 1\n"
+        "\tpop rbp\n"
+        "\tret\n"
+
+"\t_default_ret:\n"
+        "\tsub eax, ecx\n"
+        "\tpop rbp\n"
+        "\tret\n"
+
+        ".att_syntax prefix\n"
+    );
 }
+
+// int mstrcmp(const char *string1, const char *string2) {
+//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
+
+//     while (*string1 != '\0' && *string2 != '\0')
+//     {
+//         if (*string1 < *string2) return -1;
+//         if (*string1 > *string2) return  1;
+
+//         string1++;
+//         string2++;
+//     }
+
+//     if (*string1 == '\0') {
+//         if (*string2 == '\0') return 0;
+//         return -1;
+//     }
+    
+//     // else (string1 && !string2)
+//     return 1;
+// }
 
 const char *HashMap::search(HashMap_t *hashMap, const char *key) {
     ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
