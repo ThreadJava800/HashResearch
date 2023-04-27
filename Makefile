@@ -18,13 +18,13 @@ EXECUTABLE=hasht
 
 SFML_EXEC= -lsfml-graphics -lsfml-window -lsfml-system
  
-all: erase compile
+all: compile
 
 erase:
 	clear
 
 compile:
-	@${CC} -O0 $(SOURCES) -o $(EXECUTABLE)
+	@${CC} -O0 -mavx2 $(SOURCES) -o $(EXECUTABLE)
 
 run:
 	@./${EXECUTABLE}

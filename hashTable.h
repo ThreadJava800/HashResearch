@@ -16,6 +16,7 @@ const size_t POISON_HASH      = 0xDEADBEEF;
 const size_t DEFAULT_GNU_HASH = 0xDED;
 const size_t DEFAULT_ARR_SIZE = 127;
 
+static const int MAX_WORD_LEN = 100;
 static const int WORD_COUNT = 250948;
 static const char *dictionaryFile = "data/cleaned.txt";
 
@@ -27,6 +28,7 @@ struct HashMap_t {
 };
 //===========HASH MAP FUNCS=============
 int mstrcmp(const char *string1, const char *string2);
+int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2);
 
 namespace HashMap {
     HashMap_t  *ctor  (HashFunc_t hashFunc);
