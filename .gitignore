@@ -33,6 +33,7 @@
 # Executables
 *.exe
 *.out
+!strcmpFile.o
 *.app
 
 ### Linux ###

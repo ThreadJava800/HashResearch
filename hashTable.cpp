@@ -26,15 +26,7 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
     ON_ERROR(!hashMap || !key || !value, "Nullptr",);
 
     size_t hashSum = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
-
-    // int count = 0;
-    // while (count < 10) {
-    //     fprintf(stderr, "%d ", *key);
-    //     key++;
-    //     count ++;
-    // }
-
-    // fprintf(stderr, "%ld\n", mstrlen(key));
+    
     Pair_t addPair = {
         .key       = strdup(key),
         .value     = strdup(value),
@@ -79,61 +71,60 @@ long mstrlen(const char *string) {
 }
 
 // search with inline assembly
-int mstrcmp(const char *string1, const char *string2) {
-    ON_ERROR(!string1 || !string2, "Nullptr", -1);
+// int mstrcmp(const char *string1, const char *string2) {
+//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
-    __asm__ (
-        ".intel_syntax noprefix\n"
+//     __asm__ (
+//         ".intel_syntax noprefix\n"
 
-        "\txor eax, eax\n"
-        "\txor ecx, ecx\n"
-    "\t_loop:\n"
-        "\tmovb al, BYTE PTR [rdi]\n"
-        "\tmovb cl, BYTE PTR [rsi]\n"
+//         "\txor eax, eax\n"
+//         "\txor ecx, ecx\n"
+//     "\t_loop:\n"
+//         "\tmovb al, BYTE PTR [rdi]\n"
+//         "\tmovb cl, BYTE PTR [rsi]\n"
 
-        "\tcmp al, 0\n"
-        "\tje _retNeg\n"
+//         "\tcmp al, 0\n"
+//         "\tje _retNeg\n"
 
-        "\tcmp cl, 0\n"
-        "\tje _ret1\n"
+//         "\tcmp cl, 0\n"
+//         "\tje _ret1\n"
 
-        "\tcmp al, cl\n"
-        "\tjne _default_ret\n"
+//         "\tcmp al, cl\n"
+//         "\tjne _default_ret\n"
 
-        "\tinc rsi\n"
-        "\tinc rdi\n"
+//         "\tinc rsi\n"
+//         "\tinc rdi\n"
 
-        "\tjmp _loop\n"
+//         "\tjmp _loop\n"
 
-"\t_ret0:\n"
-        "\tmov eax, 0\n"
-        "\tpop rbp\n"
-        "\tret\n"
+// "\t_ret0:\n"
+//         "\tmov eax, 0\n"
+//         "\tpop rbp\n"
+//         "\tret\n"
 
-"\t_ret1:\n"
-        "\tcmp al, cl\n"
-        "\tje _ret0\n"
+// "\t_ret1:\n"
+//         "\tcmp al, cl\n"
+//         "\tje _ret0\n"
 
-        "\tmov eax, 1\n"
-        "\tpop rbp\n"
-        "\tret\n"
+//         "\tmov eax, 1\n"
+//         "\tpop rbp\n"
+//         "\tret\n"
         
-"\t_retNeg:\n"
-        "\tcmp al, cl\n"
-        "\tje _ret0\n"
+// "\t_retNeg:\n"
+//         "\tcmp al, cl\n"
+//         "\tje _ret0\n"
 
-        "\tmov eax, 1\n"
-        "\tpop rbp\n"
-        "\tret\n"
+//         "\tmov eax, 1\n"
+//         "\tpop rbp\n"
+//         "\tret\n"
 
-"\t_default_ret:\n"
-        "\tsub eax, ecx\n"
-        "\tpop rbp\n"
-        "\tret\n"
+// "\t_default_ret:\n"
+//         "\tsub eax, ecx\n"
+//         "\tret\n"
 
-        ".att_syntax prefix\n"
-    );
-}
+//         ".att_syntax prefix\n"
+//     );
+// }
 
 int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2) {
     ON_ERROR(!string1 || !string2, "Nullptr", -1);

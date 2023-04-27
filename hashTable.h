@@ -28,7 +28,8 @@ struct HashMap_t {
 };
 //===========HASH MAP FUNCS=============
 long mstrlen(const char *string);
-int mstrcmp(const char *string1, const char *string2);
+// int mstrcmp(const char *string1, const char *string2);
+extern "C" int mstrcmp(const char *string1, const char *string2);
 int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2);
 
 namespace HashMap {
