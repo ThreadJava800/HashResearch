@@ -27,6 +27,7 @@ struct HashMap_t {
     HashFunc_t hashFunc = nullptr;
 };
 //===========HASH MAP FUNCS=============
+long mstrlen(const char *string);
 int mstrcmp(const char *string1, const char *string2);
 int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2);
 
@@ -38,17 +39,17 @@ namespace HashMap {
 };
 
 //==========HASH FUNCTIONS============
-uchar rotr(uchar value);
-uchar rotl(uchar value);
+uint64_t rotr(uint64_t value);
+uint64_t rotl(uint64_t value);
 
 static const int HASH_COUNT = 6;
 
-size_t numberHash(const char *string);
-size_t asciiHash (const char *string);
-size_t lenHash   (const char *string);
-size_t rotrHash  (const char *string);
-size_t rotlHash  (const char *string);
-size_t gnuHash   (const char *string);
+uint64_t numberHash(const char *string);
+uint64_t asciiHash (const char *string);
+uint64_t lenHash   (const char *string);
+uint64_t rotrHash  (const char *string);
+uint64_t rotlHash  (const char *string);
+uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========
 HashMap_t *parseFile(HashFunc_t hashFunc);

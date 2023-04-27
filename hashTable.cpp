@@ -27,12 +27,55 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
 
     size_t hashSum = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
 
+    // int count = 0;
+    // while (count < 10) {
+    //     fprintf(stderr, "%d ", *key);
+    //     key++;
+    //     count ++;
+    // }
+
+    // fprintf(stderr, "%ld\n", mstrlen(key));
     Pair_t addPair = {
         .key       = strdup(key),
         .value     = strdup(value),
         .keyLength = strlen(key)
     };
     listPushBack(hashMap->data[hashSum], addPair);
+}
+
+// long mstrlen(const char *string) {
+//     ON_ERROR(!string, "Nullptr", -1);
+
+//     long strLen = 0;
+//     while (*string != '\0') {
+//         strLen++;
+//         string++;
+//     }
+
+//     return strLen;
+// }
+
+long mstrlen(const char *string) {
+    ON_ERROR(!string, "Nullptr", -1);
+
+    __asm__(
+    ".intel_syntax noprefix\n"
+
+        "\txor rax, rax\n"
+        "\tcmp BYTE PTR [rdi], 0\n"
+        "\tje .leave\n"
+
+    ".mstrloop:\n"
+        "\tinc rax\n"
+        "\tcmp BYTE PTR [rdi + rax], 0\n"
+        "\tjne .mstrloop\n"
+
+    ".leave:\n"
+        "\tpop rbp\n"
+        "\tret\n"
+
+    ".att_syntax prefix\n"
+    );
 }
 
 // search with inline assembly
@@ -133,7 +176,7 @@ int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen
     return 0;
 }
 
-// naive search
+// naive strcmp
 // int mstrcmp(const char *string1, const char *string2) {
 //     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
@@ -162,10 +205,11 @@ const char *HashMap::search(HashMap_t *hashMap, const char *key) {
 
     size_t  hashSum    = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
     List_t *searchList = hashMap->data[hashSum];
+    long    keyLength  = strlen(key);
 
     for (long i = 0; i < searchList->size; i++) {
         Pair_t checkPair = listGet(searchList, i);
-        if (!mstrcmp(key, checkPair.key)) {
+        if (!mstrcmp2(key, keyLength, checkPair.key, checkPair.keyLength)) {
             return checkPair.value;
         }
     }

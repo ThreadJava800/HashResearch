@@ -20,7 +20,15 @@ int main() {
     // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     // printf("%lld\n", duration.count());
 
-    printf("%d\n", mstrcmp2("Tom lost so much weight that one of his friends walked straight past him in the street, without recognising him.", 112, "Tom lost so much weight that one of his friends walked straight past him in the street, without recognising him.", 112));
+    double allTime = 0;
+    auto start = std::chrono::high_resolution_clock::now(); 
+    for (long i = 0; i < 1000000000; i++) {
+        rotlHash("I asked Tom where he had been.\n");
+    }
+    auto end   = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    printf("%lld\n", duration.count());
 
     return 0;
 }

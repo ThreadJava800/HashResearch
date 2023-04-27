@@ -1,29 +1,29 @@
 #include "hashTable.h"
 
-uchar rotr(uchar value) {
-    return (value >> 1) | (value << 7);
+uint64_t rotr(uint64_t value) {
+    return (value >> 1) | (value << 63);
 }
 
-uchar rotl(uchar value) {
-    return (value << 1) | (value >> 7);
+uint64_t rotl(uint64_t value) {
+    return (value << 1) | (value >> 63);
 }
 
-size_t numberHash (const char *string) {
+uint64_t numberHash (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 
     return 1;
 }
 
-size_t asciiHash (const char *string) {
+uint64_t asciiHash (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 
-    return (size_t) string[0];
+    return (uint64_t) string[0];
 }
 
-size_t lenHash (const char *string) {
+uint64_t lenHash (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 
-    size_t length = 0;
+    uint64_t length = 0;
     while (*string != '\0')
     {
         length++;
@@ -33,52 +33,63 @@ size_t lenHash (const char *string) {
     return length;
 }
 
-size_t rotrHash  (const char *string) {
+uint64_t rotrHash  (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 
-    uchar prevHash = rotr(*string);
-    string++;
-
-    size_t resultHash = prevHash;
+    uint64_t hash = 0;
 
     while (*string != '\0')
     {
-        prevHash    = rotr(prevHash) ^ (*string);
-        resultHash += prevHash;
+        hash = rotr(hash) ^ (*string);
 
         string++;
     }
     
-    return resultHash;
+    return hash;
 }
 
-size_t rotlHash  (const char *string) {
-    ON_ERROR(!string, "Nullptr", POISON_HASH);
+uint64_t rotlHash (const char *string) {
+    __asm__(
+    ".intel_syntax noprefix\n"
+        "\txor rax, rax\n"
 
-    uchar prevHash = rotl(*string);
-    string++;
+    ".rotlLoop:\n"
+        "\tmovzx rcx, BYTE PTR [rdi]\n"
+        "\trol rax, 1\n"
+        "\txor rax, rcx\n"
+        "\tinc rdi\n"
+        "\tcmp BYTE PTR [rdi], 0\n"
+        "\tjne .rotlLoop\n"
 
-    size_t resultHash = prevHash;
+        "\tret\n"
 
-    while (*string != '\0')
-    {
-        prevHash    = rotl(prevHash) ^ (*string);
-        resultHash += prevHash;
+    ".att_syntax prefix\n"
+    );
+}
 
-        string++;
-    }
+// uint64_t rotlHash  (const char *string) {
+//     ON_ERROR(!string, "Nullptr", POISON_HASH);
+
+//     uint64_t hash = 0;
+
+//     while (*string != '\0')
+//     {
+//         hash = rotl(hash) ^ ((uint64_t) (*string));
+
+//         string++;
+//     }
     
-    return resultHash;
-}
+//     return hash;
+// }
 
-size_t gnuHash   (const char *string) {
+uint64_t gnuHash   (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 
-    size_t hash = DEFAULT_GNU_HASH;
+    uint64_t hash = DEFAULT_GNU_HASH;
 
     while (*string != '\0')
     {
-        hash = hash * 3 + (size_t) *string;
+        hash = hash * 3 + (uint64_t) *string;
 
         string++;
     }
