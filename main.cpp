@@ -6,7 +6,7 @@ int main() {
     // HashMap::insert(hashMap, "test", "me");
     // HashMap::dtor(hashMap);
 
-    // testHashes();
+    testHashes();
 
     // HashMap_t *hashMap = parseFile(rotlHash);
     // const char *value = HashMap::search(hashMap, "I asked Tom where he had been.\n");
@@ -29,7 +29,7 @@ int main() {
     // auto end   = std::chrono::high_resolution_clock::now();
     // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    printf("%d\n", mstrcmp("test", "tetst"));
+    // printf("%d\n", mstrcmp("test", "tetst"));
 
     return 0;
 }
