@@ -108,7 +108,7 @@ uint64_t rotrHash  (const char *string) {
 | ROR-хеш | 49.7 | 1977.7 | 251171 |
 | GNU-хеш | 44.6 | 1977.7 | 251171 |
 
-Теперь сравним ROR и ROL.
+Теперь сравним GNU и ROL.
 
 ![Const](https://github.com/ThreadJava800/HashResearch/blob/main/readmepics/RorRol.png)
 
