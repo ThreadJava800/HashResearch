@@ -1,12 +1,15 @@
 #include "hashTable.h"
-#include <chrono>
+#include "measure.hpp"
 
 int main() {
     // HashMap_t *hashMap = HashMap::ctor(rotlHash);
     // HashMap::insert(hashMap, "test", "me");
     // HashMap::dtor(hashMap);
 
-    testHashes();
+    // testHashes();
+
+    double res = medianTime(rotlHash, "Doubtless there exists in this world precisely the right woman for any given man to marry and vice versa; but when you consider that a human being has the opportunity of being acquainted with only a few hundred people, and out of the few hundred that there are but a dozen or less whom he knows intimately, and out of the dozen, one or two friends at most, it will easily be seen, when we remember the number of millions who inhabit this world, that probably, since the earth was created, the right man has never yet met the right woman.", 1e8);
+    printf("%lf\n", res);
 
     // HashMap_t *hashMap = parseFile(rotlHash);
     // const char *value = HashMap::search(hashMap, "I asked Tom where he had been.\n");
