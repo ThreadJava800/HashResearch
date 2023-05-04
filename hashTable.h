@@ -30,6 +30,8 @@ struct HashMap_t {
 long mstrlen(const char *string);
 // int mstrcmp(const char *string1, const char *string2);
 extern "C" int mstrcmp(const char *string1, const char *string2);
+extern "C" uint64_t rotlHash(const char *string);
+
 int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2);
 
 namespace HashMap {
@@ -49,7 +51,7 @@ uint64_t numberHash(const char *string);
 uint64_t asciiHash (const char *string);
 uint64_t lenHash   (const char *string);
 uint64_t rotrHash  (const char *string);
-uint64_t rotlHash  (const char *string);
+// uint64_t rotlHash  (const char *string);
 uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========

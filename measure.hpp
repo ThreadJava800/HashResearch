@@ -1,6 +1,6 @@
 #include <chrono>
 
-typedef long (*TestFunc_t)(const char *string1);
+typedef uint64_t (*TestFunc_t)(const char *string1);
 
 double medianTime(TestFunc_t func, const char *string1, int repeatCount) {
     double allTime = 0;

@@ -34,6 +34,7 @@
 *.exe
 *.out
 !strcmpFile.o
+!rotlHash.o
 *.app
 
 ### Linux ###

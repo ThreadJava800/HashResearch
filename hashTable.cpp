@@ -195,11 +195,11 @@ const char *HashMap::search(HashMap_t *hashMap, const char *key) {
 
     size_t  hashSum    = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
     List_t *searchList = hashMap->data[hashSum];
-    long    keyLength  = strlen(key);
+    long    keyLength  = mstrlen(key);
 
     for (long i = 0; i < searchList->size; i++) {
         Pair_t checkPair = listGet(searchList, i);
-        if (!mstrcmp2(key, keyLength, checkPair.key, checkPair.keyLength)) {
+        if (!mstrcmp(key, checkPair.key)) {
             return checkPair.value;
         }
     }
