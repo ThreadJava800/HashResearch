@@ -24,7 +24,7 @@ erase:
 	clear
 
 compile:
-	@${CC} -g -o $(EXECUTABLE) -O1 -mavx2 $(SOURCES)
+	@${CC} -g -o $(EXECUTABLE) -no-pie strcmpFile.o -O1 -mavx2 $(SOURCES)
 
 run:
 	@./${EXECUTABLE}
