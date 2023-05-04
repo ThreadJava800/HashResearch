@@ -85,9 +85,13 @@ void stressTest() {
         }
     }
 
+    auto start = std::chrono::high_resolution_clock::now(); 
     for (int i = 0;  i < (int) 1e5; i++) {
         int index = rand() % WORD_COUNT;
         HashMap::search(hashMap, strArr[index]);
     }
+    auto end   = std::chrono::high_resolution_clock::now(); 
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    printf("%lld\n", duration.count());
     
 }

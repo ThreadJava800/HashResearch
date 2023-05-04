@@ -48,39 +48,39 @@ uint64_t rotrHash  (const char *string) {
     return hash;
 }
 
-uint64_t rotlHash (const char *string) {
-    __asm__(
-    ".intel_syntax noprefix\n"
-        "\txor rax, rax\n"
+// uint64_t rotlHash (const char *string) {
+//     __asm__(
+//     ".intel_syntax noprefix\n"
+//         "\txor rax, rax\n"
 
-    ".rotlLoop:\n"
-        "\tmovzx rcx, BYTE PTR [rdi]\n"
-        "\trol rax, 1\n"
-        "\txor rax, rcx\n"
-        "\tinc rdi\n"
-        "\tcmp BYTE PTR [rdi], 0\n"
-        "\tjne .rotlLoop\n"
+//     ".rotlLoop:\n"
+//         "\tmovzx rcx, BYTE PTR [rdi]\n"
+//         "\trol rax, 1\n"
+//         "\txor rax, rcx\n"
+//         "\tinc rdi\n"
+//         "\tcmp BYTE PTR [rdi], 0\n"
+//         "\tjne .rotlLoop\n"
 
-        "\tret\n"
+//         "\tret\n"
 
-    ".att_syntax prefix\n"
-    );
-}
-
-// uint64_t rotlHash  (const char *string) {
-//     ON_ERROR(!string, "Nullptr", POISON_HASH);
-
-//     uint64_t hash = 0;
-
-//     while (*string != '\0')
-//     {
-//         hash = rotl(hash) ^ ((uint64_t) (*string));
-
-//         string++;
-//     }
-    
-//     return hash;
+//     ".att_syntax prefix\n"
+//     );
 // }
+
+uint64_t rotlHash  (const char *string) {
+    ON_ERROR(!string, "Nullptr", POISON_HASH);
+
+    uint64_t hash = 0;
+
+    while (*string != '\0')
+    {
+        hash = rotl(hash) ^ ((uint64_t) (*string));
+
+        string++;
+    }
+    
+    return hash;
+}
 
 uint64_t gnuHash   (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
