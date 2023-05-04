@@ -35,40 +35,39 @@ void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
     listPushBack(hashMap->data[hashSum], addPair);
 }
 
-// long mstrlen(const char *string) {
-//     ON_ERROR(!string, "Nullptr", -1);
-
-//     long strLen = 0;
-//     while (*string != '\0') {
-//         strLen++;
-//         string++;
-//     }
-
-//     return strLen;
-// }
-
 long mstrlen(const char *string) {
     ON_ERROR(!string, "Nullptr", -1);
 
-    __asm__(
-    ".intel_syntax noprefix\n"
+    long strLen = 0;
+    while (*string != '\0') {
+        strLen++;
+        string++;
+    }
 
-        "\txor rax, rax\n"
-        "\tcmp BYTE PTR [rdi], 0\n"
-        "\tje .leave\n"
-
-    ".mstrloop:\n"
-        "\tinc rax\n"
-        "\tcmp BYTE PTR [rdi + rax], 0\n"
-        "\tjne .mstrloop\n"
-
-    ".leave:\n"
-        "\tpop rbp\n"
-        "\tret\n"
-
-    ".att_syntax prefix\n"
-    );
+    return strLen;
 }
+
+// long mstrlen(const char *string) {
+//     ON_ERROR(!string, "Nullptr", -1);
+
+//     __asm__(
+//     ".intel_syntax noprefix\n"
+
+//         "\txor rax, rax\n"
+//         "\tcmp BYTE PTR [rdi], 0\n"
+//         "\tje .leave\n"
+
+//     ".mstrloop:\n"
+//         "\tinc rax\n"
+//         "\tcmp BYTE PTR [rdi + rax], 0\n"
+//         "\tjne .mstrloop\n"
+
+//     ".leave:\n"
+//         "\tret\n"
+
+//     ".att_syntax prefix\n"
+//     );
+// }
 
 // search with inline assembly
 // int mstrcmp(const char *string1, const char *string2) {
