@@ -146,7 +146,7 @@ uint64_t rotrHash  (const char *string) {
 |---|---|---|---|
 | - | 2277.6 ± 12.1 ms | baseline | baseline |
 
-Для поиска т.н. "узких мест" я использовал профайлер [Perf](https://perf.wiki.kernel.org/index.php/Main_Page) и GUI [Hotspot](https://github.com/KDAB/hotspot) для него.\
+Для поиска т.н. "узких мест" я использовал профайлер [Valgrind](https://valgrind.org/) и GUI [Callgrind](https://valgrind.org/docs/manual/cl-manual.html) для него.\
 Программа указала, что основное проблемное место - в функции сравнения строк:\
 ![Const](https://github.com/ThreadJava800/HashResearch/blob/main/readmepics/perf1.png)
 
