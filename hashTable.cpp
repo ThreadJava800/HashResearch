@@ -74,14 +74,45 @@ int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long str
     return 0;
 }
 
-short comparator(Elem_t val1, Elem_t val2) {
-    if (!myStrcmpAVX(val1.key, val2.key, val1.keyLength, val2.keyLength)) {
-        return 1;
+int myStrcmp(const char *string1, const char *string2) {
+    if (!string1 || !string2) return -1;
+
+    while (*string1 != '\0' && *string2 != '\0')
+    {
+        if (*string1 < *string2) return -1;
+        if (*string1 > *string2) return  1;
+
+        string1++;
+        string2++;
     }
-    return 0;
+
+    if (*string1 == '\0') {
+        if (*string2 == '\0') return 0;
+        return -1;
+    }
+    
+    // else (string1 && !string2)
+    return 1;
 }
 
-// naive search
+bool comparator(Elem_t val1, Elem_t val2) {
+    if (!myStrcmp(val1.key, val2.key)) {
+        return true;
+    }
+    return false;
+}
+
+long myStrlen(const char *string) {
+    ON_ERROR(!string, "Nullptr", -1);
+
+    const char *stringStart = string;
+    while (*string != '\0') {
+        string++;
+    }
+
+    return string - stringStart;
+}
+
 const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
     ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
 
@@ -90,7 +121,7 @@ const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
 
     Elem_t compareElement = {
         .key = key,
-        .keyLength = (size_t) strlen(key)
+        .keyLength = (size_t) myStrlen(key)
     };
 
     return listFind(&searchList, compareElement, comparator)->value.value;

@@ -13,13 +13,14 @@ typedef unsigned char uchar;
 typedef size_t (*HashFunc_t)(const char *string);
 
 //=========CONSTANT SECTION==========
-const size_t POISON_HASH      = 0xDEADBEEF;
-const size_t DEFAULT_GNU_HASH = 0xDED;
-const size_t DEFAULT_ARR_SIZE = 127;
+const size_t POISON_HASH          = 0xDEADBEEF;
+const size_t DEFAULT_GNU_HASH     = 0xDED;
+const size_t DEFAULT_ARR_SIZE     = 127;
+const int    SEARCH_TEST_CNT      = 1e5;
 
-static const int HASH_COUNT   = 6;
-static const int MAX_WORD_LEN = 100;
-static const int WORD_COUNT   = 250948;
+static const int   HASH_COUNT     = 6;
+static const int   MAX_WORD_LEN   = 100;
+static const int   WORD_COUNT     = 251171;
 static const char *dictionaryFile = "data/cleaned.txt";
 //===================================
 
@@ -40,7 +41,6 @@ uint64_t rotr(uint64_t value);  // rotate byte right
 uint64_t rotl(uint64_t value);  // rotate byte left
 
 long myStrlen(const char *string);
-// int myStrcmp(const char *string1, long strlen1, const char *string2, long strlen2);
 extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2);
 int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2);
 
@@ -54,10 +54,11 @@ extern "C" uint64_t rotlHash(const char *string);
 uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========
-HashMap_t *parseFile(HashFunc_t hashFunc);
+HashMap_t *fillHashMap(HashFunc_t hashFunc);
 void countDeviation(HashMap_t *hashMapArr[HASH_COUNT]);
-void testHashes();
-void stressTest();
+void measureHashDistribution();
+void shuffleArray(const char **arr, size_t arrSize);
+void measureHashMapFind();
 
 
 #if MAKE_CHECKS
