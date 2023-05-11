@@ -1,6 +1,6 @@
-global mstrcmp
+global myStrcmp
 
-mstrcmp:
+myStrcmp:
 
     xor eax, eax
     xor ecx, ecx

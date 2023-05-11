@@ -12,45 +12,44 @@
 typedef unsigned char uchar;
 typedef size_t (*HashFunc_t)(const char *string);
 
+//=========CONSTANT SECTION==========
 const size_t POISON_HASH      = 0xDEADBEEF;
 const size_t DEFAULT_GNU_HASH = 0xDED;
 const size_t DEFAULT_ARR_SIZE = 127;
 
+static const int HASH_COUNT   = 6;
 static const int MAX_WORD_LEN = 100;
-static const int WORD_COUNT = 250948;
+static const int WORD_COUNT   = 250948;
 static const char *dictionaryFile = "data/cleaned.txt";
+//===================================
 
 struct HashMap_t {
-    List_t **data       = nullptr;
+    List_t *listArr     = nullptr;
+    size_t  listCnt     = 0;
 
-    size_t capacity     = 0;
     HashFunc_t hashFunc = nullptr;
 };
 //===========HASH MAP FUNCS=============
-long mstrlen(const char *string);
-// int mstrcmp(const char *string1, const char *string2);
-extern "C" int mstrcmp(const char *string1, const char *string2);
-extern "C" uint64_t rotlHash(const char *string);
+HashMap_t  *hashMapCtor  (HashFunc_t hashFunc);
+void        hashMapInsert(HashMap_t *hashMap, const char *key, const char *value);
+const char *hashMapSearch(HashMap_t *hashMap, const char *key);
+void        hashMapDtor  (HashMap_t *hashMap);
+//======================================
 
-int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2);
+uint64_t rotr(uint64_t value);  // rotate byte right
+uint64_t rotl(uint64_t value);  // rotate byte left
 
-namespace HashMap {
-    HashMap_t  *ctor  (HashFunc_t hashFunc);
-    void        insert(HashMap_t *hashMap, const char *key, const char *value);
-    const char *search(HashMap_t *hashMap, const char *key);
-    void        dtor  (HashMap_t *hashMap);
-};
+long myStrlen(const char *string);
+// int myStrcmp(const char *string1, long strlen1, const char *string2, long strlen2);
+extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2);
+int myStrcmpAVX(const char *string1, long strlen1, const char *string2, long strlen2);
 
 //==========HASH FUNCTIONS============
-uint64_t rotr(uint64_t value);
-uint64_t rotl(uint64_t value);
-
-static const int HASH_COUNT = 6;
-
 uint64_t numberHash(const char *string);
 uint64_t asciiHash (const char *string);
 uint64_t lenHash   (const char *string);
 uint64_t rotrHash  (const char *string);
+extern "C" uint64_t rotlHash(const char *string);
 // uint64_t rotlHash  (const char *string);
 uint64_t gnuHash   (const char *string);
 

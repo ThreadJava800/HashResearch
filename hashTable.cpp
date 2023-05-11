@@ -1,53 +1,50 @@
 #include "hashTable.h"
 
-HashMap_t *HashMap::ctor(HashFunc_t hashFunc) {
+HashMap_t *hashMapCtor(HashFunc_t hashFunc) {
+    ON_ERROR(!hashFunc, "HashFunc pointer was NULL", nullptr);
+
     HashMap_t *hashMap = (HashMap_t*) calloc(1, sizeof(HashMap_t));
     ON_ERROR(!hashMap, "Unable to alloc memory", nullptr);
 
-    List_t **listArr = (List_t **) calloc(DEFAULT_ARR_SIZE, sizeof(List_t*));
+    List_t *listArr = (List_t *) calloc(DEFAULT_ARR_SIZE, sizeof(List_t));
     ON_ERROR(!listArr,"Unable to alloc memory", nullptr);
 
     for (size_t i = 0; i < DEFAULT_ARR_SIZE; i++) {
-        listArr[i] = (List_t *) calloc(1, sizeof(List_t));
-        ON_ERROR(!(listArr[i]), "Unable to alloc memory", nullptr);
-
-        int ctorErr = 0;
-        _listCtor(listArr[i], WORD_COUNT, 0, &ctorErr);
+        _listCtor(&listArr[i], WORD_COUNT, 0);
     }
 
-    hashMap->data     = listArr;
+    hashMap->listArr  = listArr;
     hashMap->hashFunc = hashFunc;
-    hashMap->capacity = DEFAULT_ARR_SIZE;
+    hashMap->listCnt  = DEFAULT_ARR_SIZE;
 
     return hashMap;    
 }
 
-void HashMap::insert(HashMap_t *hashMap, const char *key, const char *value) {
+void hashMapInsert(HashMap_t *hashMap, const char *key, const char *value) {
     ON_ERROR(!hashMap || !key || !value, "Nullptr",);
 
-    size_t hashSum = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
+    size_t hashSum = hashMap->hashFunc(key) % hashMap->listCnt;
     
     Pair_t addPair = {
         .key       = strdup(key),
         .value     = strdup(value),
         .keyLength = strlen(key)
     };
-    listPushBack(hashMap->data[hashSum], addPair);
+    listPushBack(&(hashMap->listArr[hashSum]), addPair);
 }
 
-long mstrlen(const char *string) {
-    ON_ERROR(!string, "Nullptr", -1);
+// long myStrlen(const char *string) {
+//     ON_ERROR(!string, "Nullptr", -1);
 
-    long strLen = 0;
-    while (*string != '\0') {
-        strLen++;
-        string++;
-    }
+//     const char *stringStart = string;
+//     while (*string != '\0') {
+//         string++;
+//     }
 
-    return strLen;
-}
+//     return string - stringStart;
+// }
 
-// long mstrlen(const char *string) {
+// long myStrlen(const char *string) {
 //     ON_ERROR(!string, "Nullptr", -1);
 
 //     __asm__(
@@ -69,8 +66,31 @@ long mstrlen(const char *string) {
 //     );
 // }
 
+long myStrlen(const char *string) {
+    ON_ERROR(!string, "Nullptr", -1);
+
+    __asm__(
+    ".intel_syntax noprefix\n"
+
+    "\tmov rsi, rdi\n"
+    "\tmov rax, rsi\n"
+
+"__strlenLoop:\n"
+    "\tlodsb\n"
+    
+    "\tcmp al, 0x00\n"
+    "\tjne __strlenLoop\n"
+
+    "\tsub rsi, rax\n"
+    "\tmov rax, rsi\n"
+    "\tret\n"
+
+    ".att_syntax prefix\n"
+    );
+}
+
 // search with inline assembly
-// int mstrcmp(const char *string1, const char *string2) {
+// int myStrcmp(const char *string1, const char *string2) {
 //     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
 //     __asm__ (
@@ -98,7 +118,6 @@ long mstrlen(const char *string) {
 
 // "\t_ret0:\n"
 //         "\tmov eax, 0\n"
-//         "\tpop rbp\n"
 //         "\tret\n"
 
 // "\t_ret1:\n"
@@ -106,7 +125,6 @@ long mstrlen(const char *string) {
 //         "\tje _ret0\n"
 
 //         "\tmov eax, 1\n"
-//         "\tpop rbp\n"
 //         "\tret\n"
         
 // "\t_retNeg:\n"
@@ -114,7 +132,6 @@ long mstrlen(const char *string) {
 //         "\tje _ret0\n"
 
 //         "\tmov eax, 1\n"
-//         "\tpop rbp\n"
 //         "\tret\n"
 
 // "\t_default_ret:\n"
@@ -125,7 +142,82 @@ long mstrlen(const char *string) {
 //     );
 // }
 
-int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen2) {
+// int myStrcmp(const char *string1, const char *string2) {
+//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
+
+//     __asm__ (
+//         ".intel_syntax noprefix\n"
+
+//         "\txor rax, rax\n"
+//         "\tcld\n"
+
+//         ".strcmpLoop:\n"
+//             "\tmovb cl, BYTE PTR [rdi]\n"
+//             "\tmovb ch, BYTE PTR [rsi]\n"
+
+//             "\tcmp ch, 0x00\n"
+//             "\tje .checkDi\n"
+
+//             "\tcmp cl, 0x00\n"
+//             "\tje .retMinus\n"
+
+//             "\trepe cmpsb\n"
+//             "\tje .strcmpLoop\n"
+
+//             "\tmovb al, BYTE PTR [rdi-1]\n"
+//             "\tsub al, BYTE PTR [rsi-1]\n"
+//             "\tjmp .exit\n"
+
+//         ".checkDi:\n"
+//             "\tcmp cl, 0x00\n"
+//             "\tje .exit\n"
+
+//             "\tmov rax, 1\n"
+//             "\tjmp .exit\n"
+
+//         ".retMinus:\n"
+//             "\tmov rax, -1\n"
+
+//         ".exit:\n"
+//             "\tret\n"
+
+//         ".att_syntax prefix\n"
+//     );
+// }
+
+extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2) {
+    ON_ERROR(!string1 || !string2, "Nullptr", -1);
+
+    __asm__ ( 
+        ".intel_syntax noprefix\n"
+
+        "\txor rax, rax\n"
+        "\tcmp rcx, rdx\n"
+        "\tjne .difLens\n"
+
+        "\tcld\n"
+
+        "\trepe cmpsb\n"
+        "\tje .notEq\n"
+        "\tjmp .exit\n"
+
+    ".notEq:\n"
+        "\tmovb al, BYTE PTR [rsi]\n"
+        "\tsub al,  BYTE PTR [rdi]\n"
+        "\tjmp .exit\n"
+
+    ".difLens:\n"
+        "\tmov rax, rcx\n"
+        "\tsub rax, rdx\n"
+
+    ".exit:\n"
+        "\tret\n"
+
+    ".att_syntax prefix\n"
+    );
+}
+
+int myStrcmpAVX(const char *string1, long strlen1, const char *string2, long strlen2) {
     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
     if (strlen1 != strlen2) return -1;
@@ -167,7 +259,7 @@ int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen
 }
 
 // naive strcmp
-// int mstrcmp(const char *string1, const char *string2) {
+// int myStrcmp(const char *string1, const char *string2) {
 //     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
 //     while (*string1 != '\0' && *string2 != '\0')
@@ -188,30 +280,33 @@ int mstrcmp2(const char *string1, long strlen1, const char *string2, long strlen
 //     return 1;
 // }
 
-
-// naive search
-const char *HashMap::search(HashMap_t *hashMap, const char *key) {
-    ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
-
-    size_t  hashSum    = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
-    List_t *searchList = hashMap->data[hashSum];
-    long    keyLength  = mstrlen(key);
-
-    for (long i = 0; i < searchList->size; i++) {
-        Pair_t checkPair = listGet(searchList, i);
-        if (!mstrcmp(key, checkPair.key)) {
-            return checkPair.value;
-        }
+short comparator(Elem_t val1, Elem_t val2) {
+    if (!myStrcmpAVX(val1.key, val1.keyLength, val2.key, val2.keyLength)) {
+        return 1;
     }
-
-    return nullptr;
+    return 0;
 }
 
-// const char *HashMap::search(HashMap_t *hashMap, const char *key) {
+// naive search
+const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
+    ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
+
+    size_t  hashSum    = hashMap->hashFunc(key) % hashMap->listCnt;
+    List_t  searchList = hashMap->listArr[hashSum];
+
+    Elem_t compareElement = {
+        .key = key,
+        .keyLength = (size_t) myStrlen(key)
+    };
+
+    return listFind(&searchList, compareElement, comparator)->value.value;
+}
+
+// const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
 //     ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
 
-//     size_t  hashSum    = hashMap->hashFunc(key) % DEFAULT_ARR_SIZE;
-//     List_t *searchList = hashMap->data[hashSum];
+//     size_t  hashSum    = hashMap->hashFunc(key) % hashMap->listCnt;
+//     List_t *searchList = hashMap->listArr[hashSum];
 //     long    listSize   = searchList->size;
 
 //     for (long i = 0; i < listSize - 32; i += 32) {
@@ -253,16 +348,19 @@ const char *HashMap::search(HashMap_t *hashMap, const char *key) {
 //     return nullptr;
 // }
 
-void HashMap::dtor(HashMap_t *hashMap) {
+void hashMapDtor(HashMap_t *hashMap) {
     ON_ERROR(!hashMap, "Nullptr",);
     ON_ERROR(!hashMap->data, "Nullptr",);
 
-    for (size_t i = 0; i < DEFAULT_ARR_SIZE; i++) {
-        ON_ERROR(!hashMap->data[i], "Nullptr",);
+    for (size_t i = 0; i < hashMap->listCnt; i++) {
+        List_t listToFree = hashMap->listArr[i];
 
-        free(hashMap->data[i]);
+        for (size_t j = 0; j < listToFree.size; j++) {
+            free((char*) listToFree.values[j].value.key);
+            free((char*) listToFree.values[j].value.value);
+        }
     }
 
-    free(hashMap->data);
+    free(hashMap->listArr);
     free(hashMap);
 }
