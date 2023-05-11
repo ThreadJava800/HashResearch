@@ -254,3 +254,38 @@ extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, 
     ".att_syntax prefix\n"
     );
 }
+
+int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2) {
+    ON_ERROR(!string1 || !string2, "Nullptr", -1);
+
+    __asm__ ( 
+        ".intel_syntax noprefix\n"
+
+    "strcmp:\n"
+        "\txor rax, rax\n"
+        "\tcmp rcx, rdx\n"
+        "\tjne .difLens\n"
+
+    ".strcmpLoop:\n"
+        "\tmov al, byte [rdi]\n"
+        "\tcmp al, byte [rsi]\n"
+        "\tjne .notEq\n"
+
+        "\tinc rdi\n"
+        "\tinc rsi\n"
+        "\tloop .strcmpLoop\n"
+
+    ".notEq:\n"
+        "\tsub al, byte [rsi-1]\n"
+        "\tjmp .exit\n"
+
+    ".difLens:\n"
+        "\tmov rax, rdx\n"
+        "\tsub rax, rcx\n"
+
+    ".exit:\n"
+        "\tret\n"
+
+    ".att_syntax prefix\n"
+    );
+}

@@ -67,20 +67,20 @@ uint64_t rotrHash  (const char *string) {
 //     );
 // }
 
-// uint64_t rotlHash  (const char *string) {
-//     ON_ERROR(!string, "Nullptr", POISON_HASH);
+uint64_t rotlHash  (const char *string) {
+    ON_ERROR(!string, "Nullptr", POISON_HASH);
 
-//     uint64_t hash = 0;
+    uint64_t hash = 0;
 
-//     while (*string != '\0')
-//     {
-//         hash = rotl(hash) ^ ((uint64_t) (*string));
+    while (*string != '\0')
+    {
+        hash = rotl(hash) ^ ((uint64_t) (*string));
 
-//         string++;
-//     }
+        string++;
+    }
     
-//     return hash;
-// }
+    return hash;
+}
 
 uint64_t gnuHash   (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);

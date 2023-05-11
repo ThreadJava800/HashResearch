@@ -22,23 +22,6 @@ zerBuf:     times 64 db 0
 oneChar:  db 0
 section .text
 
-mstrlen:
-    mov rsi, rdi
-
-__strlenLoop:
-    lodsb           ; ds:si -> al
-    
-    cmp al, 0x00
-    je __exit
-
-    inc rcx
-    jmp __strlenLoop
-
-__exit:
-    mov rax, rcx    ; return data
-    ret
-
-
 ;-----------------------------------------------------------
 ; Print dec of value
 ;-----------------------------------------------------------
@@ -100,9 +83,40 @@ ToDec.PrintPos:
                 ret
 
 
+; rdi and rsi first and second strings rdx, rcx - lens
+strcmp:
+    xor rax, rax
+    cmp rcx, rdx
+    jne .difLens
+
+.strcmpLoop:
+    mov al, byte [rdi]
+    cmp al, byte [rsi]
+    jne .notEq
+
+    inc rdi
+    inc rsi
+    loop .strcmpLoop
+
+.notEq:
+    sub al, byte [rsi-1]
+    jmp .exit
+
+.difLens:
+    mov rax, rdx
+    sub rax, rcx
+
+.exit:
+    ret
+
+
 _start:
     mov rdi, string1
-    call mstrlen
+    mov rsi, string2
+    mov rdx, 5
+    mov rcx, 5
+
+    call strcmp
 
     mov rbp, rax
     call ToDec
@@ -111,5 +125,5 @@ _start:
     syscall 
 
 section .data
-string1: db "Testimtt", 0
+string1: db "Test4", 0
 string2: db "Test3", 0

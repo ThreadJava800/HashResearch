@@ -1,45 +1,24 @@
 global myStrcmp
 
 myStrcmp:
+    xor rax, rax
+    cmp rcx, rdx
+    jne .difLens
 
-    xor eax, eax
-    xor ecx, ecx
+    cld
 
-_loop:
+    repe cmpsb
+    je .notEq
+    jmp .exit
+
+.notEq:
     mov al, byte [rdi]
-    mov cl, byte [rsi]
+    sub al, byte [rsi]
+    jmp .exit
 
-    cmp al, 0
-    je _retNeg
+.difLens:
+    mov rax, rcx
+    sub rax, rdx
 
-    cmp cl, 0
-    je _ret1
-
-    cmp al, cl
-    jne _default_ret
-
-    inc rsi
-    inc rdi
-
-    jmp _loop
-
-_ret0:
-    mov eax, 0
-    ret
-
-_ret1:
-    cmp al, cl
-    je _ret0
-    mov eax, 1
-    ret
-        
-_retNeg:
-    cmp al, cl
-    je _ret0
-
-    mov eax, 1
-    ret
-
-_default_ret:
-    sub eax, ecx
+.exit:
     ret

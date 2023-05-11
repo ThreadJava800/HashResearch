@@ -74,43 +74,43 @@ int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long str
     return 0;
 }
 
-int myStrcmp(const char *string1, const char *string2) {
-    if (!string1 || !string2) return -1;
-
-    while (*string1 != '\0' && *string2 != '\0')
-    {
-        if (*string1 < *string2) return -1;
-        if (*string1 > *string2) return  1;
-
-        string1++;
-        string2++;
-    }
-
-    if (*string1 == '\0') {
-        if (*string2 == '\0') return 0;
-        return -1;
-    }
-    
-    // else (string1 && !string2)
-    return 1;
-}
-
 bool comparator(Elem_t val1, Elem_t val2) {
-    if (!myStrcmp(val1.key, val2.key)) {
+    if (!myStrcmpAVX(val1.key, val2.key, val1.keyLength, val2.keyLength)) {
         return true;
     }
     return false;
 }
 
-long myStrlen(const char *string) {
-    ON_ERROR(!string, "Nullptr", -1);
+extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2) {
+    ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
-    const char *stringStart = string;
-    while (*string != '\0') {
-        string++;
-    }
+    __asm__ ( 
+        ".intel_syntax noprefix\n"
 
-    return string - stringStart;
+        "\txor rax, rax\n"
+        "\tcmp rcx, rdx\n"
+        "\tjne .difLens\n"
+
+        "\tcld\n"
+
+        "\trepe cmpsb\n"
+        "\tje .notEq\n"
+        "\tjmp .exit\n"
+
+    ".notEq:\n"
+        "\tmovb al, BYTE PTR [rsi]\n"
+        "\tsub al,  BYTE PTR [rdi]\n"
+        "\tjmp .exit\n"
+
+    ".difLens:\n"
+        "\tmov rax, rcx\n"
+        "\tsub rax, rdx\n"
+
+    ".exit:\n"
+        "\tret\n"
+
+    ".att_syntax prefix\n"
+    );
 }
 
 const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
@@ -121,7 +121,7 @@ const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
 
     Elem_t compareElement = {
         .key = key,
-        .keyLength = (size_t) myStrlen(key)
+        .keyLength = (size_t) strlen(key)
     };
 
     return listFind(&searchList, compareElement, comparator)->value.value;
