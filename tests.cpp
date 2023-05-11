@@ -16,7 +16,7 @@ HashMap_t *parseFile(HashFunc_t hashFunc) {
         getline(&valueLine, &lineLen, file);
         hashMapInsert(hashMap, keyLine, valueLine);
     }
-    // fclose(file);
+    fclose(file);
 
     return hashMap;
 }
