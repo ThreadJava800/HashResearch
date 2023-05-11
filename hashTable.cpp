@@ -33,191 +33,7 @@ void hashMapInsert(HashMap_t *hashMap, const char *key, const char *value) {
     listPushBack(&(hashMap->listArr[hashSum]), addPair);
 }
 
-// long myStrlen(const char *string) {
-//     ON_ERROR(!string, "Nullptr", -1);
-
-//     const char *stringStart = string;
-//     while (*string != '\0') {
-//         string++;
-//     }
-
-//     return string - stringStart;
-// }
-
-// long myStrlen(const char *string) {
-//     ON_ERROR(!string, "Nullptr", -1);
-
-//     __asm__(
-//     ".intel_syntax noprefix\n"
-
-//         "\txor rax, rax\n"
-//         "\tcmp BYTE PTR [rdi], 0\n"
-//         "\tje .leave\n"
-
-//     ".mstrloop:\n"
-//         "\tinc rax\n"
-//         "\tcmp BYTE PTR [rdi + rax], 0\n"
-//         "\tjne .mstrloop\n"
-
-//     ".leave:\n"
-//         "\tret\n"
-
-//     ".att_syntax prefix\n"
-//     );
-// }
-
-long myStrlen(const char *string) {
-    ON_ERROR(!string, "Nullptr", -1);
-
-    __asm__(
-    ".intel_syntax noprefix\n"
-
-    "\tmov rsi, rdi\n"
-    "\tmov rax, rsi\n"
-
-"__strlenLoop:\n"
-    "\tlodsb\n"
-    
-    "\tcmp al, 0x00\n"
-    "\tjne __strlenLoop\n"
-
-    "\tsub rsi, rax\n"
-    "\tmov rax, rsi\n"
-    "\tret\n"
-
-    ".att_syntax prefix\n"
-    );
-}
-
-// search with inline assembly
-// int myStrcmp(const char *string1, const char *string2) {
-//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
-
-//     __asm__ (
-//         ".intel_syntax noprefix\n"
-
-//         "\txor eax, eax\n"
-//         "\txor ecx, ecx\n"
-//     "\t_loop:\n"
-//         "\tmovb al, BYTE PTR [rdi]\n"
-//         "\tmovb cl, BYTE PTR [rsi]\n"
-
-//         "\tcmp al, 0\n"
-//         "\tje _retNeg\n"
-
-//         "\tcmp cl, 0\n"
-//         "\tje _ret1\n"
-
-//         "\tcmp al, cl\n"
-//         "\tjne _default_ret\n"
-
-//         "\tinc rsi\n"
-//         "\tinc rdi\n"
-
-//         "\tjmp _loop\n"
-
-// "\t_ret0:\n"
-//         "\tmov eax, 0\n"
-//         "\tret\n"
-
-// "\t_ret1:\n"
-//         "\tcmp al, cl\n"
-//         "\tje _ret0\n"
-
-//         "\tmov eax, 1\n"
-//         "\tret\n"
-        
-// "\t_retNeg:\n"
-//         "\tcmp al, cl\n"
-//         "\tje _ret0\n"
-
-//         "\tmov eax, 1\n"
-//         "\tret\n"
-
-// "\t_default_ret:\n"
-//         "\tsub eax, ecx\n"
-//         "\tret\n"
-
-//         ".att_syntax prefix\n"
-//     );
-// }
-
-// int myStrcmp(const char *string1, const char *string2) {
-//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
-
-//     __asm__ (
-//         ".intel_syntax noprefix\n"
-
-//         "\txor rax, rax\n"
-//         "\tcld\n"
-
-//         ".strcmpLoop:\n"
-//             "\tmovb cl, BYTE PTR [rdi]\n"
-//             "\tmovb ch, BYTE PTR [rsi]\n"
-
-//             "\tcmp ch, 0x00\n"
-//             "\tje .checkDi\n"
-
-//             "\tcmp cl, 0x00\n"
-//             "\tje .retMinus\n"
-
-//             "\trepe cmpsb\n"
-//             "\tje .strcmpLoop\n"
-
-//             "\tmovb al, BYTE PTR [rdi-1]\n"
-//             "\tsub al, BYTE PTR [rsi-1]\n"
-//             "\tjmp .exit\n"
-
-//         ".checkDi:\n"
-//             "\tcmp cl, 0x00\n"
-//             "\tje .exit\n"
-
-//             "\tmov rax, 1\n"
-//             "\tjmp .exit\n"
-
-//         ".retMinus:\n"
-//             "\tmov rax, -1\n"
-
-//         ".exit:\n"
-//             "\tret\n"
-
-//         ".att_syntax prefix\n"
-//     );
-// }
-
-extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2) {
-    ON_ERROR(!string1 || !string2, "Nullptr", -1);
-
-    __asm__ ( 
-        ".intel_syntax noprefix\n"
-
-        "\txor rax, rax\n"
-        "\tcmp rcx, rdx\n"
-        "\tjne .difLens\n"
-
-        "\tcld\n"
-
-        "\trepe cmpsb\n"
-        "\tje .notEq\n"
-        "\tjmp .exit\n"
-
-    ".notEq:\n"
-        "\tmovb al, BYTE PTR [rsi]\n"
-        "\tsub al,  BYTE PTR [rdi]\n"
-        "\tjmp .exit\n"
-
-    ".difLens:\n"
-        "\tmov rax, rcx\n"
-        "\tsub rax, rdx\n"
-
-    ".exit:\n"
-        "\tret\n"
-
-    ".att_syntax prefix\n"
-    );
-}
-
-int myStrcmpAVX(const char *string1, long strlen1, const char *string2, long strlen2) {
+int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2) {
     ON_ERROR(!string1 || !string2, "Nullptr", -1);
 
     if (strlen1 != strlen2) return -1;
@@ -258,30 +74,8 @@ int myStrcmpAVX(const char *string1, long strlen1, const char *string2, long str
     return 0;
 }
 
-// naive strcmp
-// int myStrcmp(const char *string1, const char *string2) {
-//     ON_ERROR(!string1 || !string2, "Nullptr", -1);
-
-//     while (*string1 != '\0' && *string2 != '\0')
-//     {
-//         if (*string1 < *string2) return -1;
-//         if (*string1 > *string2) return  1;
-
-//         string1++;
-//         string2++;
-//     }
-
-//     if (*string1 == '\0') {
-//         if (*string2 == '\0') return 0;
-//         return -1;
-//     }
-    
-//     // else (string1 && !string2)
-//     return 1;
-// }
-
 short comparator(Elem_t val1, Elem_t val2) {
-    if (!myStrcmpAVX(val1.key, val1.keyLength, val2.key, val2.keyLength)) {
+    if (!myStrcmpAVX(val1.key, val2.key, val1.keyLength, val2.keyLength)) {
         return 1;
     }
     return 0;
@@ -296,57 +90,11 @@ const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
 
     Elem_t compareElement = {
         .key = key,
-        .keyLength = (size_t) myStrlen(key)
+        .keyLength = (size_t) strlen(key)
     };
 
     return listFind(&searchList, compareElement, comparator)->value.value;
 }
-
-// const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
-//     ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
-
-//     size_t  hashSum    = hashMap->hashFunc(key) % hashMap->listCnt;
-//     List_t *searchList = hashMap->listArr[hashSum];
-//     long    listSize   = searchList->size;
-
-//     for (long i = 0; i < listSize - 32; i += 32) {
-//         Pair_t pairs[32] = {};
-
-//         for (int j = 0; j < 32; j++) {
-//             pairs[j] = listGet(searchList, i + j);
-//         }
-
-//         for (int m = 0; m < MAX_WORD_LEN; m++) {
-//             char mPosLetters[32] = {};
-//             for (int j = 0; j < 32; j++) {
-//                 if (pairs[j].keyLength > m) mPosLetters[j] = 0;
-//                 else                        mPosLetters[j] = pairs[j].key[m];
-//             }
-
-//             __m256i hashStrings = _mm256_set_epi8(
-//                 mPosLetters[31], mPosLetters[30], mPosLetters[29], mPosLetters[28],
-//                 mPosLetters[27], mPosLetters[26], mPosLetters[25], mPosLetters[24],
-//                 mPosLetters[23], mPosLetters[22], mPosLetters[21], mPosLetters[20],
-//                 mPosLetters[19], mPosLetters[18], mPosLetters[17], mPosLetters[16],
-//                 mPosLetters[15], mPosLetters[14], mPosLetters[13], mPosLetters[12],
-//                 mPosLetters[11], mPosLetters[10], mPosLetters[9],  mPosLetters[8],
-//                 mPosLetters[7],  mPosLetters[6],  mPosLetters[5],  mPosLetters[4],
-//                 mPosLetters[3],  mPosLetters[2],  mPosLetters[1],  mPosLetters[0]
-//             );
-
-
-//         }
-//     }
-
-//     for (long i = listSize - 32; i < listSize; i++) {
-//         Pair_t checkPair = listGet(searchList, i);
-//         if (!mstrcmp(key, checkPair.key)) {
-//             return checkPair.value;
-//         }
-//     }
-
-//     return nullptr;
-// }
 
 void hashMapDtor(HashMap_t *hashMap) {
     ON_ERROR(!hashMap, "Nullptr",);
@@ -359,6 +107,8 @@ void hashMapDtor(HashMap_t *hashMap) {
             free((char*) listToFree.values[j].value.key);
             free((char*) listToFree.values[j].value.value);
         }
+
+        listDtor(&listToFree);
     }
 
     free(hashMap->listArr);

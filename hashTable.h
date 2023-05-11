@@ -42,7 +42,7 @@ uint64_t rotl(uint64_t value);  // rotate byte left
 long myStrlen(const char *string);
 // int myStrcmp(const char *string1, long strlen1, const char *string2, long strlen2);
 extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2);
-int myStrcmpAVX(const char *string1, long strlen1, const char *string2, long strlen2);
+int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2);
 
 //==========HASH FUNCTIONS============
 uint64_t numberHash(const char *string);
@@ -55,6 +55,7 @@ uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========
 HashMap_t *parseFile(HashFunc_t hashFunc);
+void countDeviation(HashMap_t *hashMapArr[HASH_COUNT]);
 void testHashes();
 void stressTest();
 

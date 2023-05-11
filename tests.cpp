@@ -21,9 +21,35 @@ HashMap_t *parseFile(HashFunc_t hashFunc) {
     return hashMap;
 }
 
+void countDeviation(HashMap_t *hashMapArr[HASH_COUNT]) {
+    double median = 0;
+    double deviations[HASH_COUNT] = {};
+
+    // count median
+    for (int i = 0; i < DEFAULT_ARR_SIZE; i++) {
+        median += hashMapArr[0]->listArr[i].size;
+    }
+    median /= DEFAULT_ARR_SIZE;
+
+    // count deviation
+    for (int i = 0; i < DEFAULT_ARR_SIZE; i++) {
+        for (int j = 0; j < HASH_COUNT; j++) {
+            deviations[j] += (hashMapArr[j]->listArr[i].size - median) * 
+                                                (hashMapArr[j]->listArr[i].size - median);
+        }
+    }
+
+    // print deviations and median for each hashMap
+    for (int i = 0; i < HASH_COUNT; i++) {
+        deviations[i] /= DEFAULT_ARR_SIZE;
+        printf("%lf %lf\n", sqrt(deviations[i]), median);
+
+        hashMapDtor(hashMapArr[i]);
+    }
+}
+
 void testHashes() {
-    HashMap_t *hashMaps[HASH_COUNT] = {};
-    double    *deviations = (double*) calloc(HASH_COUNT, sizeof(long));
+    HashMap_t *hashMaps[HASH_COUNT]   = {};
 
     // pushing words to lists
     hashMaps[0] = parseFile(numberHash);
@@ -37,7 +63,6 @@ void testHashes() {
     FILE *file = fopen("hashTests.csv", "wb");
     fprintf(file, "NUMBER,ASCII,LENGTH,ROTR,ROTL,GNU\n");
 
-    double median = 0;
     for (int i = 0; i < DEFAULT_ARR_SIZE; i++) {
         for (int j = 0; j < HASH_COUNT; j++) {
             fprintf(file, "%ld,", hashMaps[j]->listArr->size);
@@ -46,27 +71,7 @@ void testHashes() {
     }
     fclose(file);
 
-    // count median
-    for (int i = 0; i < DEFAULT_ARR_SIZE; i++) {
-        median += hashMaps[0]->listArr[i].size;
-    }
-    median /= DEFAULT_ARR_SIZE;
-
-    // count deviation
-    for (int i = 0; i < DEFAULT_ARR_SIZE; i++) {
-        for (int j = 0; j < HASH_COUNT; j++) {
-            deviations[j] += (hashMaps[j]->listArr[i].size - median) * (hashMaps[j]->listArr[i].size - median);
-        }
-    }
-
-    for (int i = 0; i < HASH_COUNT; i++) {
-        deviations[i] /= DEFAULT_ARR_SIZE;
-        printf("%lf %lf\n", sqrt(deviations[i]), median);
-
-        hashMapDtor(hashMaps[i]);
-    }
-
-    free(deviations);
+    countDeviation(hashMaps);
 } 
 
 void stressTest() {
@@ -75,13 +80,12 @@ void stressTest() {
     HashMap_t *hashMap = parseFile(rotlHash);
     const char **strArr = (const char **) calloc(WORD_COUNT, sizeof(const char *));
 
+    // getting keys
     int wordCnt = 0;
     for (int i = 0; i < hashMap->listCnt; i++) {
         for (int j = 0; j < hashMap->listArr[i].size; j++) {
             Pair_t checkPair  = listGet(&(hashMap->listArr[i]), j);
-            strArr[wordCnt] = checkPair.key;
-
-            wordCnt++;
+            strArr[wordCnt++] = checkPair.key;
         }
     }
 
@@ -90,8 +94,7 @@ void stressTest() {
         int index = rand() % WORD_COUNT;
         hashMapSearch(hashMap, strArr[index]);
     }
-    auto end   = std::chrono::high_resolution_clock::now(); 
+    auto end      = std::chrono::high_resolution_clock::now(); 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     printf("%lld\n", duration.count());
-    
 }
