@@ -310,7 +310,7 @@ if (cmpMask != 0xFFFFFFFF) return -1;
 | Сравнение строк | 542.2 ± 2.5 | 3.70x | 3.74x |
 
 И по итогу в профайлере функция опустилась ниже:\
-![Const](https://github.com/ThreadJava800/HashResearch/blob/main/readmepics/hotspot.png)
+![Const](https://github.com/ThreadJava800/HashResearch/blob/main/readmepics/hotspot2.png)
 
 ### Хеш-функция <a name="optim3"></a>
 Как можно видеть в профайлере, следующая функция, относящаяся к поиску - хеш-функция (`rotlHash()`).
