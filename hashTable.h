@@ -37,8 +37,8 @@ const char *hashMapSearch(HashMap_t *hashMap, const char *key);
 void        hashMapDtor  (HashMap_t *hashMap);
 //======================================
 
-uint64_t rotr(uint64_t value);  // rotate byte right
-uint64_t rotl(uint64_t value);  // rotate byte left
+uint64_t rotr(uint64_t value);  // rotate uint64 right
+uint64_t rotl(uint64_t value);  // rotate uint64 left
 
 int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2);
 
