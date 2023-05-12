@@ -48,25 +48,6 @@ uint64_t rotrHash  (const char *string) {
     return hash;
 }
 
-// __attribute__ ((always_inline)) uint64_t rotlHash (const char *string) {
-//     __asm__(
-//     ".intel_syntax noprefix\n"
-//         "\txor rax, rax\n"
-
-//     ".rotlLoop:\n"
-//         "\tmovzx rcx, BYTE PTR [rdi]\n"
-//         "\trol rax, 1\n"
-//         "\txor rax, rcx\n"
-//         "\tinc rdi\n"
-//         "\tcmp BYTE PTR [rdi], 0\n"
-//         "\tjne .rotlLoop\n"
-
-//         "\tret\n"
-
-//     ".att_syntax prefix\n"
-//     );
-// }
-
 uint64_t rotlHash  (const char *string) {
     ON_ERROR(!string, "Nullptr", POISON_HASH);
 

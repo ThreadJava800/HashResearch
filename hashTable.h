@@ -40,8 +40,6 @@ void        hashMapDtor  (HashMap_t *hashMap);
 uint64_t rotr(uint64_t value);  // rotate byte right
 uint64_t rotl(uint64_t value);  // rotate byte left
 
-long myStrlen(const char *string);
-int myStrcmp(const char *string1, const char *string2);
 int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2);
 
 //==========HASH FUNCTIONS============
@@ -49,8 +47,7 @@ uint64_t numberHash(const char *string);
 uint64_t asciiHash (const char *string);
 uint64_t lenHash   (const char *string);
 uint64_t rotrHash  (const char *string);
-extern "C" uint64_t rotlHash(const char *string);
-// uint64_t rotlHash  (const char *string);
+uint64_t rotlHash  (const char *string);
 uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========
