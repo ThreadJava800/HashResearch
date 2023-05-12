@@ -41,7 +41,7 @@ uint64_t rotr(uint64_t value);  // rotate byte right
 uint64_t rotl(uint64_t value);  // rotate byte left
 
 long myStrlen(const char *string);
-extern "C" int myStrcmp(const char *string1, const char *string2, long strlen1, long strlen2);
+int myStrcmp(const char *string1, const char *string2);
 int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2);
 
 //==========HASH FUNCTIONS============
