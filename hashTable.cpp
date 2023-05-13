@@ -1,13 +1,21 @@
 #include "hashTable.h"
 
-HashMap_t *hashMapCtor(HashFunc_t hashFunc) {
-    ON_ERROR(!hashFunc, "HashFunc pointer was NULL", nullptr);
+HashMap_t *hashMapNew(HashFunc_t hashFunc) {
+    ON_ERROR(!hashFunc, "Nullptr", nullptr);
 
     HashMap_t *hashMap = (HashMap_t*) calloc(1, sizeof(HashMap_t));
     ON_ERROR(!hashMap, "Unable to alloc memory", nullptr);
 
+    hashMapCtor(hashMap, hashFunc);
+
+    return hashMap;
+}
+
+void hashMapCtor(HashMap_t *hashMap, HashFunc_t hashFunc) {
+    ON_ERROR(!hashFunc || !hashMap, "Nullptr", nullptr);
+
     List_t *listArr = (List_t *) calloc(DEFAULT_ARR_SIZE, sizeof(List_t));
-    ON_ERROR(!listArr,"Unable to alloc memory", nullptr);
+    ON_ERROR(!listArr, "Unable to alloc memory", );
 
     for (size_t i = 0; i < DEFAULT_ARR_SIZE; i++) {
         _listCtor(&listArr[i], WORD_COUNT, 0);
@@ -15,9 +23,32 @@ HashMap_t *hashMapCtor(HashFunc_t hashFunc) {
 
     hashMap->listArr  = listArr;
     hashMap->hashFunc = hashFunc;
-    hashMap->listCnt  = DEFAULT_ARR_SIZE;
+    hashMap->listCnt  = DEFAULT_ARR_SIZE;  
+}
 
-    return hashMap;    
+void hashMapDelete(HashMap_t *hashMap) {
+    ON_ERROR(!hashMap, "Nullptr",);
+
+    hashMapDtor(hashMap);
+    free(hashMap);
+}
+
+void hashMapDtor(HashMap_t *hashMap) {
+    ON_ERROR(!hashMap, "Nullptr",);
+    ON_ERROR(!hashMap->data, "Nullptr",);
+
+    for (size_t i = 0; i < hashMap->listCnt; i++) {
+        List_t listToFree = hashMap->listArr[i];
+
+        for (size_t j = 0; j < listToFree.size + 1; j++) {
+            free((char*) listToFree.values[j].value.key);
+            free((char*) listToFree.values[j].value.value);
+        }
+
+        listDtor(&listToFree);
+    }
+
+    free(hashMap->listArr);
 }
 
 void hashMapInsert(HashMap_t *hashMap, const char *key, const char *value) {
@@ -74,11 +105,8 @@ int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long str
     return 0;
 }
 
-bool comparator(Elem_t val1, Elem_t val2) {
-    if (!myStrcmpAVX(val1.key, val2.key, val1.keyLength, val2.keyLength)) {
-        return true;
-    }
-    return false;
+bool comparator(Elem_t *val1, Elem_t *val2) {
+    return !myStrcmpAVX(val1->key, val2->key, val1->keyLength, val2->keyLength);
 }
 
 const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
@@ -92,24 +120,5 @@ const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
         .keyLength = (size_t) strlen(key)
     };
 
-    return listFind(&searchList, compareElement, comparator)->value.value;
-}
-
-void hashMapDtor(HashMap_t *hashMap) {
-    ON_ERROR(!hashMap, "Nullptr",);
-    ON_ERROR(!hashMap->data, "Nullptr",);
-
-    for (size_t i = 0; i < hashMap->listCnt; i++) {
-        List_t listToFree = hashMap->listArr[i];
-
-        for (size_t j = 0; j < listToFree.size; j++) {
-            free((char*) listToFree.values[j].value.key);
-            free((char*) listToFree.values[j].value.value);
-        }
-
-        listDtor(&listToFree);
-    }
-
-    free(hashMap->listArr);
-    free(hashMap);
+    return listFind(&searchList, &compareElement, comparator)->value.value;
 }

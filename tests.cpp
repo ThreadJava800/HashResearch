@@ -1,9 +1,9 @@
 #include "hashTable.h"
 
-HashMap_t *fillHashMap(HashFunc_t hashFunc) {
-    HashMap_t *hashMap = hashMapCtor(hashFunc);
+HashMap_t *createHashMapFromFile(HashFunc_t hashFunc) {
+    HashMap_t *hashMap = hashMapNew(hashFunc);
 
-    FILE *file = fopen(dictionaryFile, "r");
+    FILE *file = fopen(DICTIONARY_FILE, "r");
     ON_ERROR(!file, "Couldn't open file",);
 
     char *keyLine   = NULL;
@@ -23,6 +23,7 @@ HashMap_t *fillHashMap(HashFunc_t hashFunc) {
         keyLine = NULL;
         valueLine = NULL;
     }
+    free(keyLine);
     fclose(file);
 
     return hashMap;
@@ -50,8 +51,6 @@ void countDeviation(HashMap_t *hashMapArr[HASH_COUNT]) {
     for (int i = 0; i < HASH_COUNT; i++) {
         deviations[i] /= DEFAULT_ARR_SIZE;
         printf("%lf %lf\n", sqrt(deviations[i]), median);
-
-        hashMapDtor(hashMapArr[i]);
     }
 }
 
@@ -59,12 +58,12 @@ void measureHashDistribution() {
     HashMap_t *hashMaps[HASH_COUNT]   = {};
 
     // pushing words to lists
-    hashMaps[0] = fillHashMap(numberHash);
-    hashMaps[1] = fillHashMap(asciiHash);
-    hashMaps[2] = fillHashMap(lenHash);
-    hashMaps[3] = fillHashMap(rotrHash);
-    hashMaps[4] = fillHashMap(rotlHash);
-    hashMaps[5] = fillHashMap(gnuHash);
+    hashMaps[0] = createHashMapFromFile(numberHash);
+    hashMaps[1] = createHashMapFromFile(asciiHash);
+    hashMaps[2] = createHashMapFromFile(lenHash);
+    hashMaps[3] = createHashMapFromFile(rotrHash);
+    hashMaps[4] = createHashMapFromFile(rotlHash);
+    hashMaps[5] = createHashMapFromFile(gnuHash);
 
     // printing results
     FILE *file = fopen("hashTests.csv", "wb");
@@ -79,6 +78,11 @@ void measureHashDistribution() {
     fclose(file);
 
     countDeviation(hashMaps);
+
+    // delete hashMaps
+    for (int i = 0; i < HASH_COUNT; i++) {
+        hashMapDelete(hashMaps[i]);
+    }
 } 
 
 void shuffleArray(const char **arr, size_t arrSize) {
@@ -88,15 +92,15 @@ void shuffleArray(const char **arr, size_t arrSize) {
         int replIndex = i + rand() % (arrSize - i);
 
         const char *temp = arr[i];
-        arr[i] = arr[replIndex];   // some random element after i
+        arr[i] = arr[replIndex];   // random element after i
         arr[replIndex] = temp;
     }
 }
 
-void measureHashMapFind() {
+void measureHashMapFindTime() {
     srand((unsigned) time(NULL));
 
-    HashMap_t   *hashMap = fillHashMap(rotlHash);
+    HashMap_t   *hashMap = createHashMapFromFile(rotlHash);
     const char **strArr  = (const char **) calloc(WORD_COUNT, sizeof(const char *));
     ON_ERROR(!strArr, "Nullptr", );
 
@@ -118,4 +122,7 @@ void measureHashMapFind() {
     auto end      = std::chrono::high_resolution_clock::now(); 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     printf("%lld\n", duration.count());
+
+    free(strArr);
+    hashMapDelete(hashMap);
 }

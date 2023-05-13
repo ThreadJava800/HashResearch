@@ -20,11 +20,14 @@ SFML_EXEC= -lsfml-graphics -lsfml-window -lsfml-system
  
 all: compile
 
+valg:
+	valgrind --leak-check=full -v ./$(EXECUTABLE)
+
 erase:
 	clear
 
 compile:
-	@${CC} -g -o $(EXECUTABLE) -O1 -mavx2 $(SOURCES)
+	@${CC} -g -o $(EXECUTABLE) -O3 -mavx2 $(SOURCES)
 
 run:
 	@./${EXECUTABLE}

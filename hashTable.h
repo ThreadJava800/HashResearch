@@ -13,15 +13,15 @@ typedef unsigned char uchar;
 typedef size_t (*HashFunc_t)(const char *string);
 
 //=========CONSTANT SECTION==========
-const size_t POISON_HASH          = 0xDEADBEEF;
-const size_t DEFAULT_GNU_HASH     = 0xDED;
-const size_t DEFAULT_ARR_SIZE     = 127;
-const int    SEARCH_TEST_CNT      = 1e5;
+const size_t POISON_HASH           = 0xDEADBEEF;
+const size_t DEFAULT_GNU_HASH      = 0xDED;
+const size_t DEFAULT_ARR_SIZE      = 127;
+const int    SEARCH_TEST_CNT       = 1e5;
 
-static const int   HASH_COUNT     = 6;
-static const int   MAX_WORD_LEN   = 100;
-static const int   WORD_COUNT     = 251171;
-static const char *dictionaryFile = "data/cleaned.txt";
+static const int   HASH_COUNT      = 6;
+static const int   MAX_WORD_LEN    = 100;
+static const int   WORD_COUNT      = 251171;
+static const char *DICTIONARY_FILE = "data/cleaned.txt";
 //===================================
 
 struct HashMap_t {
@@ -30,11 +30,15 @@ struct HashMap_t {
 
     HashFunc_t hashFunc = nullptr;
 };
+
 //===========HASH MAP FUNCS=============
-HashMap_t  *hashMapCtor  (HashFunc_t hashFunc);
+HashMap_t  *hashMapNew   (HashFunc_t hashFunc);
+void        hashMapCtor  (HashMap_t *hashMap, HashFunc_t hashFunc);
+void        hashMapDelete(HashMap_t *hashMap);
+void        hashMapDtor  (HashMap_t *hashMap);
+
 void        hashMapInsert(HashMap_t *hashMap, const char *key, const char *value);
 const char *hashMapSearch(HashMap_t *hashMap, const char *key);
-void        hashMapDtor  (HashMap_t *hashMap);
 //======================================
 
 uint64_t rotr(uint64_t value);  // rotate uint64 right
@@ -51,11 +55,11 @@ uint64_t rotlHash  (const char *string);
 uint64_t gnuHash   (const char *string);
 
 //==========TESTING==========
-HashMap_t *fillHashMap(HashFunc_t hashFunc);
+HashMap_t *createHashMapFromFile(HashFunc_t hashFunc);
 void countDeviation(HashMap_t *hashMapArr[HASH_COUNT]);
 void measureHashDistribution();
 void shuffleArray(const char **arr, size_t arrSize);
-void measureHashMapFind();
+void measureHashMapFindTime();
 
 
 #if MAKE_CHECKS
@@ -65,6 +69,7 @@ void measureHashMapFind();
         return retVal;                                      \
     }                                                        \
 }                                                             \
+
 
 #else
 #define ON_ERROR(expr, errStr, retVal) {}
