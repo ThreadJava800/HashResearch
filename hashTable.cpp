@@ -12,7 +12,7 @@ HashMap_t *hashMapNew(HashFunc_t hashFunc) {
 }
 
 void hashMapCtor(HashMap_t *hashMap, HashFunc_t hashFunc) {
-    ON_ERROR(!hashFunc || !hashMap, "Nullptr", nullptr);
+    ON_ERROR(!hashFunc || !hashMap, "Nullptr",);
 
     List_t *listArr = (List_t *) calloc(DEFAULT_ARR_SIZE, sizeof(List_t));
     ON_ERROR(!listArr, "Unable to alloc memory", );
@@ -35,7 +35,7 @@ void hashMapDelete(HashMap_t *hashMap) {
 
 void hashMapDtor(HashMap_t *hashMap) {
     ON_ERROR(!hashMap, "Nullptr",);
-    ON_ERROR(!hashMap->data, "Nullptr",);
+    ON_ERROR(!hashMap->listArr, "Nullptr",);
 
     for (size_t i = 0; i < hashMap->listCnt; i++) {
         List_t listToFree = hashMap->listArr[i];
@@ -65,8 +65,6 @@ void hashMapInsert(HashMap_t *hashMap, const char *key, const char *value) {
 }
 
 int myStrcmpAVX(const char *string1, const char *string2, long strlen1, long strlen2) {
-    ON_ERROR(!string1 || !string2, "Nullptr", -1);
-
     if (strlen1 != strlen2) return -1;
 
     int pos = 0;
@@ -110,7 +108,7 @@ bool comparator(Elem_t *val1, Elem_t *val2) {
 }
 
 const char *hashMapSearch(HashMap_t *hashMap, const char *key) {
-    ON_ERROR(!hashMap || !(hashMap->data) || !key, "Nullptr", nullptr);
+    ON_ERROR(!hashMap || !(hashMap->listArr) || !key, "Nullptr", nullptr);
 
     size_t  hashSum    = hashMap->hashFunc(key) % hashMap->listCnt;
     List_t  searchList = hashMap->listArr[hashSum];

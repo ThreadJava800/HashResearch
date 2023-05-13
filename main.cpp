@@ -4,7 +4,7 @@
 
 int main() {
     
-    measureHashDistribution();
+    measureHashMapFindTime();
 
     return 0;
 }

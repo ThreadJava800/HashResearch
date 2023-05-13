@@ -4,7 +4,7 @@ HashMap_t *createHashMapFromFile(HashFunc_t hashFunc) {
     HashMap_t *hashMap = hashMapNew(hashFunc);
 
     FILE *file = fopen(DICTIONARY_FILE, "r");
-    ON_ERROR(!file, "Couldn't open file",);
+    ON_ERROR(!file, "Couldn't open file", nullptr);
 
     char *keyLine   = NULL;
     char *valueLine = NULL;
